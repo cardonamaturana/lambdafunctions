@@ -8,9 +8,12 @@ exports.handler = (event, context, callback) => {
   const bucketName = 'retobucket96010711301';
 
   // Nombre único para el objeto (puedes generarlo dinámicamente o pasarlo como parámetro)
-  const objectKey = event.queryStringParameters && event.queryStringParameters.fileName
+  const rawFileName = event.queryStringParameters && event.queryStringParameters.fileName
     ? event.queryStringParameters.fileName
     : 'fileNameDefault';
+
+  // Eliminar espacios del nombre de archivo
+  const objectKey = rawFileName.replace(/\s/g, '');
 
   // Obtener el correo electrónico del solicitante de la consulta (si está disponible)
   const requesterEmail = event.queryStringParameters && event.queryStringParameters.email;
@@ -36,7 +39,7 @@ exports.handler = (event, context, callback) => {
   const url = s3.getSignedUrl('putObject', {
     Bucket: bucketName,
     Key: objectKey,
-    Expires: 180,  // Tiempo de expiración de la URL en segundos (ajusta según sea necesario),
+    Expires: 3000,  // Tiempo de expiración de la URL en segundos (ajusta según sea necesario),
     Metadata: {
       email: requesterEmail,
     },

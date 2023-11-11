@@ -12,7 +12,7 @@
       "Header2": "value1,value2"
     },
     "queryStringParameters": {
-      "fileName": "fileNameExampleTestOne.csv",
+      "fileName": "file Name Example Test One.csv",
       "email": "cardona.maturana@gmail.com"
     },
     "requestContext": {
