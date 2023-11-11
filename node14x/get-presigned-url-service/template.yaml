@@ -1,0 +1,8 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Lambda function ListBucketsCommand.
+Resources:
+  getPresignedUrlService:
+    Type: AWS::Lambda::Function
+    Properties:
+      Runtime: nodejs14.x
+      Handler: index.handler

@@ -1,7 +1,7 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Lambda function ListBucketsCommand.
 Resources:
-  getPresignedUrl:
+  startProcessFile:
     Type: AWS::Lambda::Function
     Properties:
       Runtime: nodejs14.x

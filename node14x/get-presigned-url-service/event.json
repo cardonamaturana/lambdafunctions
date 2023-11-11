@@ -12,7 +12,8 @@
       "Header2": "value1,value2"
     },
     "queryStringParameters": {
-      "fileName": "fileNameExampleTestOne"
+      "fileName": "fileNameExampleTestOne.csv",
+      "email": "cardona.maturana@gmail.com"
     },
     "requestContext": {
       "accountId": "123456789012",
