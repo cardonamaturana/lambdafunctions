@@ -1,17 +1,31 @@
+const AWS = require('aws-sdk');
+const stepfunctions = new AWS.StepFunctions();
+
 exports.handler = async (event, context) => {
   try {
-    // Extraer información del evento de S3
-    const s3Event = event.Records[0].s3;
-    const bucket = s3Event.bucket.name;
-    const key = s3Event.object.key;
+    // Información que deseas pasar a la Step Function
+    const eventData = {
+      bucket: event.Records[0].s3.bucket.name,
+      key: event.Records[0].s3.object.key,
+    };
+    console.log("event.json", JSON.stringify(event, null, 2));
+    console.log("evenData", JSON.stringify(eventData, null, 2));
 
-    // Mostrar información en los logs
-    console.log('Nombre del bucket:', bucket);
-    console.log('Nombre del archivo:', key);
 
-    return { statusCode: 200, body: 'Evento de S3 procesado correctamente.' };
-  } catch (error) {
+    // Configuración para iniciar la ejecución de la Step Function de manera asíncrona
+    const params = {
+      stateMachineArn: 'ARN_DE_TU_STEP_FUNCTION', // Reemplaza con el ARN real de tu Step Function
+      input: JSON.stringify(event),
+    };
+
+    // Inicia la ejecución de la Step Function
+    const result = await stepfunctions.startExecution(params).promise();
+    console.log('Step Function execution started:', result);
+
+    // Resto de tu lógica y manejo de errores
+  }
+  catch (error) {
     console.error('Error:', error);
-    return { statusCode: 500, body: JSON.stringify({ error: 'Error en la función Lambda.' }) };
+    return { statusCode: 500, body: JSON.stringify({ error: 'Error in Lambda function.' }) };
   }
 };

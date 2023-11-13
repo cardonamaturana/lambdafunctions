@@ -1,8 +1,8 @@
 AWSTemplateFormatVersion: '2010-09-09'
 Description: Lambda function ListBucketsCommand.
 Resources:
-  getPresignedUrl:
+  readFileService:
     Type: AWS::Lambda::Function
     Properties:
       Runtime: python3.9
-      Handler: function.lambda_handler
+      Handler: lambda_function.lambda_handler
