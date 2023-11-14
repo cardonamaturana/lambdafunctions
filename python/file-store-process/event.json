@@ -1,0 +1,38 @@
+{
+  "Records": [
+    {
+      "eventVersion": "2.1",
+      "eventSource": "aws:s3",
+      "awsRegion": "us-east-1",
+      "eventTime": "2023-11-13T00:58:29.323Z",
+      "eventName": "ObjectCreated:Put",
+      "userIdentity": {
+        "principalId": "AWS:AROA2CXI5OVITNTE3EYHS:get-presigned-url"
+      },
+      "requestParameters": {
+        "sourceIPAddress": "186.116.108.109"
+      },
+      "responseElements": {
+        "x-amz-request-id": "RYQJWBR9YVE224WQ",
+        "x-amz-id-2": "u0WAOzpf1+lOfTmjgufag4t73pQUGpwkqvBfoMoCDhdSYatPa1pjK813afQKvgN5ZtpZ4WvtGXPKxK13NXfjN5C7k40vaFBj"
+      },
+      "s3": {
+        "s3SchemaVersion": "1.0",
+        "configurationId": "uploaded-file",
+        "bucket": {
+          "name": "retobucket96010711301",
+          "ownerIdentity": {
+            "principalId": "A34PZ8UCFGTT6C"
+          },
+          "arn": "arn:aws:s3:::retobucket96010711301"
+        },
+        "object": {
+          "key": "primerarchivosubido2.csv",
+          "size": 3,
+          "eTag": "81bd8770ca6ef05418cc5df8b1bc1d83",
+          "sequencer": "00655174B54ABAEC06"
+        }
+      }
+    }
+  ]
+}
