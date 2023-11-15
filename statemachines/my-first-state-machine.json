@@ -1,0 +1,204 @@
+{
+  "Comment": "A description of my state machine",
+  "StartAt": "read-file-service",
+  "States": {
+    "read-file-service": {
+      "Type": "Task",
+      "Resource": "arn:aws:states:::lambda:invoke",
+      "Parameters": {
+        "Payload.$": "$",
+        "FunctionName": "xxxxxxxxxxxxxxxxx:function:readFileService:$LATEST"
+      },
+      "Retry": [
+        {
+          "ErrorEquals": [
+            "Lambda.ServiceException",
+            "Lambda.AWSLambdaException",
+            "Lambda.SdkClientException",
+            "Lambda.TooManyRequestsException"
+          ],
+          "IntervalSeconds": 1,
+          "MaxAttempts": 3,
+          "BackoffRate": 2
+        }
+      ],
+      "Next": "Map"
+    },
+    "Map": {
+      "Type": "Map",
+      "ItemProcessor": {
+        "ProcessorConfig": {
+          "Mode": "INLINE"
+        },
+        "StartAt": "Parallel",
+        "States": {
+          "Parallel": {
+            "Type": "Parallel",
+            "Branches": [
+              {
+                "StartAt": "stores-file-process",
+                "States": {
+                  "stores-file-process": {
+                    "Type": "Task",
+                    "Resource": "arn:aws:states:::lambda:invoke",
+                    "OutputPath": "$.Payload",
+                    "Parameters": {
+                      "Payload.$": "$",
+                      "FunctionName": "xxxxxxxxxxxxxxxxxx:function:stores-file-process:$LATEST"
+                    },
+                    "Retry": [
+                      {
+                        "ErrorEquals": [
+                          "Lambda.ServiceException",
+                          "Lambda.AWSLambdaException",
+                          "Lambda.SdkClientException",
+                          "Lambda.TooManyRequestsException"
+                        ],
+                        "IntervalSeconds": 1,
+                        "MaxAttempts": 3,
+                        "BackoffRate": 2
+                      }
+                    ],
+                    "End": true
+                  }
+                }
+              },
+              {
+                "StartAt": "validate-responsable-info",
+                "States": {
+                  "validate-responsable-info": {
+                    "Type": "Task",
+                    "Resource": "arn:aws:states:::lambda:invoke",
+                    "OutputPath": "$.Payload",
+                    "Parameters": {
+                      "Payload.$": "$",
+                      "FunctionName": "xxxxxxxxxxxxxxxxxxxxxxxxx:function:validate-responsable-info:$LATEST"
+                    },
+                    "Retry": [
+                      {
+                        "ErrorEquals": [
+                          "Lambda.ServiceException",
+                          "Lambda.AWSLambdaException",
+                          "Lambda.SdkClientException",
+                          "Lambda.TooManyRequestsException"
+                        ],
+                        "IntervalSeconds": 1,
+                        "MaxAttempts": 3,
+                        "BackoffRate": 2
+                      }
+                    ],
+                    "End": true
+                  }
+                }
+              },
+              {
+                "StartAt": "validate-activo-info",
+                "States": {
+                  "validate-activo-info": {
+                    "Type": "Task",
+                    "Resource": "arn:aws:states:::lambda:invoke",
+                    "OutputPath": "$.Payload",
+                    "Parameters": {
+                      "Payload.$": "$",
+                      "FunctionName": "xxxxxxxxxxxxxxxxxxxxxxfunction:validate-activo-info:$LATEST"
+                    },
+                    "Retry": [
+                      {
+                        "ErrorEquals": [
+                          "Lambda.ServiceException",
+                          "Lambda.AWSLambdaException",
+                          "Lambda.SdkClientException",
+                          "Lambda.TooManyRequestsException"
+                        ],
+                        "IntervalSeconds": 1,
+                        "MaxAttempts": 3,
+                        "BackoffRate": 2
+                      }
+                    ],
+                    "End": true
+                  }
+                }
+              }
+            ],
+            "Next": "validate-responses"
+          },
+          "validate-responses": {
+            "Type": "Choice",
+            "Choices": [
+              {
+                "And": [
+                  {
+                    "Variable": "$[0].statusCode",
+                    "NumericEquals": 200
+                  },
+                  {
+                    "Variable": "$[1].statusCode",
+                    "NumericEquals": 200
+                  },
+                  {
+                    "Variable": "$[2].statusCode",
+                    "NumericEquals": 200
+                  }
+                ],
+                "Next": "push-new-asset-notificator"
+              }
+            ],
+            "Default": "notify-error"
+          },
+          "push-new-asset-notificator": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::sqs:sendMessage",
+            "Parameters": {
+              "MessageBody.$": "$",
+              "QueueUrl": "xxxxxxxxxxxxxxxxxx1/asset-notificator.fifo"
+            },
+            "Next": "update-file-process"
+          },
+          "notify-error": {
+            "Type": "Task",
+            "Parameters": {
+              "Destination": {},
+              "Message": {
+                "Body": {},
+                "Subject": {
+                  "Data": "MyData"
+                }
+              },
+              "Source": "MyData"
+            },
+            "Resource": "xxxxxxxxdk:ses:sendEmail",
+            "Next": "update-file-process"
+          },
+          "update-file-process": {
+            "Type": "Task",
+            "Resource": "arn:aws:states:::lambda:invoke",
+            "OutputPath": "$.Payload",
+            "Parameters": {
+              "Payload.$": "$",
+              "FunctionName": "function:update-file-process:"
+            },
+            "Retry": [
+              {
+                "ErrorEquals": [
+                  "Lambda.ServiceException",
+                  "Lambda.AWSLambdaException",
+                  "Lambda.SdkClientException",
+                  "Lambda.TooManyRequestsException"
+                ],
+                "IntervalSeconds": 1,
+                "MaxAttempts": 3,
+                "BackoffRate": 2
+              }
+            ],
+            "End": true
+          }
+        }
+      },
+      "ResultPath": "$.json_data",
+      "Comment": "that is aiterator for assets",
+      "ItemsPath": "$.Payload.json_data",
+      "MaxConcurrency": 1,
+      "End": true
+    }
+  }
+}
